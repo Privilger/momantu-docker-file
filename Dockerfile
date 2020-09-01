@@ -4,6 +4,8 @@ MAINTAINER Yizheng Zhang<zhangyizheng1996@outlook.com>
 
 ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
 
 RUN apt-get update \
 	&& apt-get install -y supervisor \
@@ -13,6 +15,9 @@ RUN apt-get update \
 		firefox \
 		git \
 		pwgen \
+		wget bzip2 ca-certificates \
+        libglib2.0-0 libxext6 libsm6 libxrender1 \
+        mercurial subversion \
 	&& apt-get autoclean \
 	&& apt-get autoremove \
 	&& rm -rf /var/lib/apt/lists/*
@@ -20,6 +25,13 @@ RUN apt-get update \
 RUN sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' \
 	&& apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654 \
 	&& apt update
+
+RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-5.3.0-Linux-x86_64.sh -O ~/anaconda.sh && \
+    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
+    rm ~/anaconda.sh && \
+    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda deactivate" >> ~/.bashrc
 
 WORKDIR /root
 
